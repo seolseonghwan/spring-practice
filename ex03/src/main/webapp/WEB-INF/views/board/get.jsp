@@ -140,42 +140,6 @@
 	<!-- 	./ end row -->
 </div>
 
-<!-- <!-- modal -->
-<!-- 	<div class="modal fade" id = "myModal" tabindex="-1" role = "dialog" aria-labelledby="myModalLabel" aria-hidden="true"> -->
-<!-- 	<div class= "modal-dialog"> -->
-<!-- 	<div class= "modal-content"> -->
-<!-- 	<div class= "modal-header"> -->
-<!-- 	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> -->
-<!-- 	<h4 class="modal-title" id="myModalLabel">REPLY MODAL</h4> -->
-<!-- 	</div> -->
-<!-- 	<div class="modal-body"> -->
-<!-- 	<div class= "form-group"> -->
-<!-- 	<label>Reply</label> -->
-<!-- 	<input class="form-control" name='reply' vlaue='New Reply!!!!'> -->
-<!-- 	</div> -->
-<!-- 	<div class="form-group"> -->
-<!-- 	<label>Replyer</label> -->
-<!-- 	<input class="form-control" name='replyer' value='replyer'> -->
-<!-- 	</div> -->
-<!-- 	<div class="form-group"> -->
-<!-- 	<label>Reply Date</label> -->
-<!-- 	<input class="form-control" name='replyDate' value=''> -->
-<!-- 	</div> -->
-<!-- 	</div> -->
-<!-- 	<div class="modal-footer"> -->
-<!-- 	<button id='modalModBtn' type="button" class="btn btn-warning">Modify</button> -->
-<!-- 	<button id='modalRemoveBtn' type="button" class="btn btn-danger">Remove</button> -->
-<!-- 	<button id='modalCloseBtn' type="button" class="btn btn-default" data-dismiss="modal"></button> -->
-<!-- 	<button id='modalClassBtn' type="button" class="btn btn-default" data-dismiss='modal'>Close</button> -->
-<!-- 	</div> -->
-<!-- 	</div> -->
-<!-- <!-- 	modal-content -->
-<!-- 	</div> -->
-<!-- <!-- 	modal-dialog -->
-<!-- 	</div> -->
-<!-- <!-- 	modal -->
-
-
 <!-- <script type="text/javascript"> -->
 // $(document).ready(function() { // var operForm = $("#operForm"); //
 $("button[data-oper='modify']").on("click", function(e) { //
@@ -184,32 +148,10 @@ $("button[data-oper='list']").on("click", function(e) { //
 operForm.find("#bno").remove(); // operForm.attr("action",
 "/board/list") // operForm.submit(); // }); // });
 <!-- </script> -->
-<script type="text/javascript" src="/resources/js/reply.js?1"></script>
+<script type="text/javascript" src="/resources/js/reply.js"></script>
 
 <script>
-$(".chat").on("click", "li", function(e){
-	
-	var rno = $(this).data("rno");
-	
-	replyService.get(rno, function(reply){
-		
-		modalInputReply.val(reply.reply);
-		modalInputReplyer.val(reply.replyer);
-		modalInputReplyDate.val(replyService.displayTime( reply.replyDate)).attr("readonly", "readonly");
-		modal.data("rno", reply.rno);
-		
-		modal.find("button[id != 'modalCloseBtn']").hide();
-		modalMoBtn.show();
-		modalRemoveBtn.show();
-		
-		$(".modal").modal("show");
-	});
-});
-
-</script>
-<script>
-	$(document).ready(
-					function() {
+	$(document).ready(function() {
 
 						var bnoValue = '<c:out value = "${board.bno}"/>';
 						var replyUL = $(".chat");
@@ -287,6 +229,44 @@ $(".chat").on("click", "li", function(e){
 								modal.find("input").val("");
 								modal.modal("hide");
 							})
+						});
+						
+						$(".chat").on("click", "li", function(e){
+							
+							var rno = $(this).data("rno");
+							
+							replyService.get(rno, function(reply){
+								
+								modalInputReply.val(reply.reply);
+								modalInputReplyer.val(reply.replyer);
+								modalInputReplyDate.val(replyService.displayTime(reply.replyDate)).attr("readonly", "readonly");
+								modal.data("rno", reply.rno);
+								
+								modal.find("button[id != 'modalCloseBtn']").hide();
+								modalModBtn.show();
+								modalRemoveBtn.show();
+								
+								$(".modal").modal("show");
+							});
+						});
+						modalModBtn.on("click", function(e){
+							
+							var reply = {rno:modal.data("rno"), reply: modalInputReply.val()};
+							
+							replyService.update(reply, function(result){
+								
+								alert(result);
+								modal.modal("hide");
+								showList(1);
+							});
+						});
+						modalRemoveBtn.on("click", function(e){
+							var rno = modal.data("rno");
+							replyService.remove(rno, function(result){
+								alert(result);
+								modal.modal("hide");
+								showList(1);
+							});
 						});
 					});
 </script>
